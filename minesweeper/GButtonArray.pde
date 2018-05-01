@@ -1,6 +1,5 @@
 class GButtonArray extends GAbstractControl
 {
-  
   GButton[][] buttons = null;
   
   GButtonArray(PApplet applet)
@@ -19,7 +18,6 @@ class GButtonArray extends GAbstractControl
 
 public GButton[][] createButtonList(PApplet applet, int x, int y, GButton template, String eventhandler)
 {
-  
   float width = template.getWidth();
   float height = template.getHeight();
   
@@ -46,9 +44,8 @@ public GButton[][] createButtonList(PApplet applet, int x, int y, GButton templa
       
     }
     
-    
     buttons[i] = row;
   }
-  
+    
   return buttons;
 }
