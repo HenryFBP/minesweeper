@@ -1,78 +1,72 @@
+public static final float MINE_CHANCE = 20.0;
+
+// A single Cell.
 public class Cell
 {
-  public GButton button;
-  public CellStatus status = CellStatus.EMPTY;
-  public boolean shown = false; //whether or not this cell is revealed
-  public int x = 0;
-  public int y = 0;
+  public CellStatus status = CellStatus.EMPTY; //what's in da cell?
+  public FlagStatus flag = FlagStatus.NO_FLAG; //if we have a flag
   
-  Cell(GButton b)
-  {
-    this.button = b;
-    this.status = CellStatus.EMPTY;
-  }
-  
-  Cell(GButton b, CellStatus s)
-  {
-    this.button = b;
-    this.status = s;
-  }
-  
-  Cell(GButton b, int x, int y)
-  {
-    this.button = b;
-    this.x = x;
-    this.y = y;
-  }
-  
-  Cell(GButton b, CellStatus s, int x, int y)
-  {
-    this.button = b;
-    this.status = s;
-    this.x = x;
-    this.y = y;
-  }
-  
-  public void render()
-  {
+  public Boolean shown = false; //whether or not this cell is revealed
+  public Location location = new Location(0, 0); //pos of cell
     
+  Cell()
+  {
   }
   
-}
-
-public Cell[][] createCellList(PApplet applet, int x, int y, Cell template, String eventhandler)
-{
-  
-  float width = template.button.getWidth();
-  float height = template.button.getHeight();
-  
-  Cell[][] cells = new Cell[y][x];
-  
-  for(int i = 0; i < x; i++)
+  Cell(CellStatus s)
   {
-    Cell[] row = new Cell[y];
-    //println("On row "+i+"!");
-
-    for(int j = 0; j < y; j++)
+    this.status = s;
+  }
+  
+  Cell(Location l)
+  {
+    this.location = l;
+  }
+  
+  Cell(CellStatus s, Location l)
+  {
+    this.status = s;
+    this.location = l;
+  }
+  
+  public void randomize()
+  {
+    float num = random(0, 100);
+    
+    if(num < MINE_CHANCE)
     {
-      float xpos = (i * width);
-      float ypos = (j * height);
-
-      Cell c = new Cell(new GButton(applet, xpos, ypos, width, height), i, j);
-      
-      c.button.setText(c.x+","+c.y);
-      
-      row[j] = c;
-      
-      if(eventhandler != null)
-      {
-        row[j].button.addEventHandler(this, eventhandler);
-      }
-      
+      this.status = CellStatus.MINE;
     }
-    
-    cells[i] = row;
+    else
+    {
+      this.status = CellStatus.EMPTY;
+    }
+  }
+
+  public boolean deadly()
+  {
+    return (this.shown && (this.status == CellStatus.MINE));
   }
   
-  return cells;
+  public void flag()
+  {
+    switch(this.flag)
+    {
+      case NO_FLAG:
+        this.flag = FlagStatus.FLAG;
+      case FLAG: 
+        this.flag = FlagStatus.QUESTION;
+      case QUESTION: 
+        this.flag = FlagStatus.NO_FLAG;
+    }
+  }
+  
+  public String toString()
+  {
+    String ret = "";
+    
+    ret += this.location.toString();
+    
+    return ret;
+  }
 }

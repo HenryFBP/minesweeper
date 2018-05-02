@@ -1,67 +1,181 @@
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArraySet;
+
+public static final int[] offsets = {-1, 0, 1};
+
 class GMineField extends GAbstractControl
 {
-  Cell[][] minefield;
+  GButtonCell[][] minefield;
     
   GMineField(PApplet applet)
   {
     super(applet);
   }
     
-  GMineField(PApplet applet, int x, int y, Cell template, String eventhandler)
+  GMineField(PApplet applet, int x, int y, GButtonCell template, String eventhandler)
   {    
     super(applet);
     
-    template.button.setVisible(false);
+    template.setVisible(false);
 
     this.minefield = createCellList(applet, x, y, template, eventhandler);
   }
     
-  public Location locationFromGButton(GButton b)
+  public int minesAround(GButtonCell source)
   {
-    int x, y;
+    int mines = 0;
+    
+    ArrayList<GButtonCell> cells = cellsAround(source);
+    
+    for(GButtonCell c : cells)
+    {      
+      if((c != null) && (c != source) && (c.cell.status == CellStatus.MINE))
+      {
+        mines++;
+      }
+    }
+    
+    return mines;
+  }
+  
+  public Boolean hasNoMinesAround(GButtonCell source)
+  {
+    return (this.minesAround(source) == 0);
+  }
+  
+  //Returns a list of cells around a source cell.
+  public ArrayList<GButtonCell> cellsAround(GButtonCell source)
+  {
+    ArrayList<GButtonCell> cells = new ArrayList();
+    
+    for(int i = 0; i < offsets.length; i++)
+    {
+      for(int j = 0; j < offsets.length; j++)
+      {
+        int x = offsets[i];
+        int y = offsets[j];
+        GButtonCell temp = this.offset(source, x, y);
+        
+        if((temp != null) && (temp != source))
+        {
+          cells.add(temp);
+        }
+      }
+    }    
+    return cells;
 
-    x = -1;
-    y = -1;
+  }
+  
+  public ArrayList<GButtonCell> cellsAroundCardinal(GButtonCell source)
+  {
+    ArrayList<GButtonCell> cells = new ArrayList();
+    
+    for(int i = 0; i < offsets.length; i++)
+    {
+      for(int j = 0; j < offsets.length; j++)
+      {
+        int x = offsets[i];
+        int y = offsets[j];
+
+        GButtonCell temp = this.offset(source, x, y);
+        
+        if((temp != null) && (x*y == 0) && (temp != source))
+        {
+          cells.add(temp);
+        }
+      }
+    }    
+    return cells;
+  }
+  
+  //Returns a cell relative to source's position.
+  public GButtonCell offset(GButtonCell source, int ox, int oy)
+  {
+    int x = source.cell.location.x;
+    int y = source.cell.location.y;
+    
+    GButtonCell c = null;
     
     try
     {
-      String s = b.getText();
-      String[] sa = s.split(",");
-      
-      x = parseInt(sa[0]);
-      y = parseInt(sa[1]);
-      
+      c = this.minefield[x+ox][y+oy];
+      //println(c);
     }
-    catch(Exception e)
+    catch(ArrayIndexOutOfBoundsException e)
     {
-      e.printStackTrace();
+      
     }
     
-    return new Location(x, y);
+    return c;
   }
   
-  public void populateCell(Cell c)
+  //Gives one of eight random neighbors
+  public GButtonCell randomNeighbor(GButtonCell source)
   {
-    float x = random(100);
+    ArrayList<GButtonCell> cells = buttons.cellsAround(source);
     
-    if(x > 50.0)
-    {
-      c.status = CellStatus.MINE;
-    }
-    else
-    {
-      c.status = CellStatus.EMPTY;
-    }
-
-  }
-  
-  public void populateMinefield()
-  {
-    for(Cell[] cells : this.minefield)
-    {
-      for(Cell cell : cells)
-      {
+    int x = ceil(random(0, cells.size()));
         
+    GButtonCell c = buttons.cellsAround(source).get(x);
+    
+    return c;
+  }
+  
+  //Clears all zeroes and highlights all non-zeroes.
+  //This is suuuuper unoptimized but I don't care.
+  public void clearChunk(GButtonCell source)
+  {
+    int i = 0;
+
+    Set<GButtonCell> seen = new CopyOnWriteArraySet(); //list of all seen cells
+    int old_size = seen.size();
+    
+    seen.add(source);
+    
+    while(seen.size() != old_size) //while we are still discovering new cells,
+    {
+      println(i,"th iteration saw ",seen.size()," items.");
+      old_size = seen.size(); //set it up to fail if size does not change
+      
+      for(GButtonCell b : seen) //for all already-marked cells,
+      {
+        if((this.minesAround(b) == 0) && (b.cell.status == CellStatus.EMPTY)) //if cell HAS NO MINES AROUND and is not a mine, add all its neighbors
+        {
+          ArrayList<GButtonCell> cells = this.cellsAroundCardinal(b);
+          seen.addAll(cells);
+        }
+      }
+      
+      i++;
+      if(i > 2000)
+      {
+        break;
+      }
+    }
+    
+    for(GButtonCell c : seen) //now, mark them all.
+    {
+      c.click(); //click empty ones
+      
+      for(GButtonCell maybebad : this.cellsAround(c))
+      {
+        if((this.minesAround(maybebad) > 0) && (maybebad.cell.shown))
+        {
+          maybebad.setText(str(this.minesAround(maybebad))); //mark cells
+          maybebad.render();
+        }
+      }
+    }
+    
+  }
+  
+  public void randomize()
+  {
+    for(GButtonCell[] gbcells : this.minefield)
+    {
+      for(GButtonCell gbcell : gbcells)
+      {
+        gbcell.cell.randomize();
       }
     }
   }

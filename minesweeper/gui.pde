@@ -1,30 +1,27 @@
-public void anybutton_click(GButton source, GEvent event)
-{
-  Location l = buttons.locationFromGButton(source);
-  Cell c = buttons.minefield[l.x][l.y];
-  
+private static int ROWS = 10;
+private static int COLS = 10;
+
+
+public void anybutton_click(GButtonCell source, GEvent event)
+{  
   if(mouseButton == LEFT)
   {
-    source.setLocalColorScheme(GCScheme.RED_SCHEME);
+    source.click();
+    
+    if(buttons.hasNoMinesAround(source) && (source.cell.status != CellStatus.MINE))
+    {
+      buttons.clearChunk(source);
+    }
   }
   else if(mouseButton == RIGHT)
   {
-    source.setLocalColorScheme(GCScheme.CYAN_SCHEME);
+    source.cell.flag();
   }
-  
-  
-    
-}
-
-void handleButtonEvents(GButton button, GEvent event)
-{
-  print("HandleButtonEvents");
-    
-  if(button == null && event == GEvent.CLICKED)
+  else if(mouseButton == CENTER)
   {
+    source.setText(str(buttons.minesAround(source)));
   }
 }
-
 
 public void createGUI() 
 {
@@ -33,12 +30,11 @@ public void createGUI()
   G4P.setCursor(ARROW);
   surface.setTitle("Sketch Window");
 
-  buttons = new GMineField(this, 3, 5, 
-    new Cell(
-      new GButton(this, 0, 0, 50, 50)
-      ), 
+  buttons = new GMineField(this, ROWS, COLS, 
+      new GButtonCell(this, 0, 0, 50, 50),
   "anybutton_click");
   
+  buttons.randomize();
 
 }
 

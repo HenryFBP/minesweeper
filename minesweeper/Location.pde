@@ -8,4 +8,9 @@ class Location
     this.x = a;
     this.y = b;
   }
+  
+  public String toString()
+  {
+    return this.x + "," + this.y;
+  }
 }
