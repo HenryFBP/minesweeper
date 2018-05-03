@@ -38,6 +38,17 @@ class GMineField extends GAbstractControl
     return mines;
   }
   
+  public void resetGame() //resets game state
+  {
+    for(GButtonCell[] row : this.minefield)
+    {
+      for(GButtonCell cell : row)
+      {
+        cell.reset();
+      }
+    }
+  }
+  
   public Boolean hasNoMinesAround(GButtonCell source)
   {
     return (this.minesAround(source) == 0);
@@ -109,6 +120,12 @@ class GMineField extends GAbstractControl
     return c;
   }
   
+  public void showMinesText(GButtonCell c)
+  {
+    c.setText(str(this.minesAround(c))); 
+    c.render();
+  }
+  
   //Gives one of eight random neighbors
   public GButtonCell randomNeighbor(GButtonCell source)
   {
@@ -123,7 +140,7 @@ class GMineField extends GAbstractControl
   
   //Clears all zeroes and highlights all non-zeroes.
   //This is suuuuper unoptimized but I don't care.
-  public void clearChunk(GButtonCell source)
+    public void clearChunk(GButtonCell source)
   {
     int i = 0;
 
@@ -153,16 +170,18 @@ class GMineField extends GAbstractControl
       }
     }
     
+    for(GButtonCell c : seen) //click empty ones
+    {
+      c.click(); 
+    }
+
     for(GButtonCell c : seen) //now, mark them all.
     {
-      c.click(); //click empty ones
-      
       for(GButtonCell maybebad : this.cellsAround(c))
       {
         if((this.minesAround(maybebad) > 0) && (maybebad.cell.shown))
         {
-          maybebad.setText(str(this.minesAround(maybebad))); //mark cells
-          maybebad.render();
+          this.showMinesText(maybebad);
         }
       }
     }

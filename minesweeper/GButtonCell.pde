@@ -17,22 +17,53 @@ class GButtonCell extends GButton
     this.cell = new Cell();
   }
   
+  public void reset()
+  {
+    this.cell.shown = false;
+    this.render();
+  }
+  
   public void render()
   {
     if(!this.cell.shown) //not shown
     {
-      this.setLocalColorScheme(GCScheme.BLUE_SCHEME);
+      switch(this.cell.flag)
+      {
+        case NO_FLAG:
+        {       
+          this.setLocalColorScheme(GCScheme.BLUE_SCHEME);
+          this.setText(""); 
+          break;
+        }
+        case FLAG:
+        {
+          this.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+          this.setText("F");
+          break;
+        }
+        case QUESTION:
+        {
+          this.setLocalColorScheme(GCScheme.PURPLE_SCHEME);
+          this.setText("?");
+        }
+      }
+ 
     }
     else //it is shown
     {
-      if(this.cell.status == CellStatus.MINE)
+      switch(this.cell.status)
       {
-        this.setLocalColorScheme(GCScheme.RED_SCHEME);
-        this.setText("BOOM");
-      }
-      else if(this.cell.status == CellStatus.EMPTY)
-      {
-        this.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+        case MINE:
+        {
+          this.setLocalColorScheme(GCScheme.RED_SCHEME);
+          this.setText("BOOM");
+          break;
+        }
+        case EMPTY:
+        {
+          this.setLocalColorScheme(GCScheme.GREEN_SCHEME);
+          break;
+        }
       }
     }
   }
@@ -52,10 +83,7 @@ class GButtonCell extends GButton
   {
     return this.cell.toString();
   }
-  
-  
 }
-
 
 public GButtonCell[][] createCellList(PApplet applet, int x, int y, GButton template, String eventhandler)
 {

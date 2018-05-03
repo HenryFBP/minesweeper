@@ -53,11 +53,20 @@ public class Cell
     switch(this.flag)
     {
       case NO_FLAG:
+      {
         this.flag = FlagStatus.FLAG;
+        break;
+      }
       case FLAG: 
+      {
         this.flag = FlagStatus.QUESTION;
+        break;
+      }
       case QUESTION: 
+      {
         this.flag = FlagStatus.NO_FLAG;
+        break;
+      }
     }
   }
   
