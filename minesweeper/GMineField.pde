@@ -39,14 +39,19 @@ class GMineField extends GAbstractControl
   }
   
   public void playerClick(GButtonCell c) //human clicks a cell
-  {
-    c.click();
-    
-    if(this.hasNoMinesAround(c) && (c.cell.status != CellStatus.MINE))
+  {    
+    if((!c.cell.shown) && this.hasNoMinesAround(c) && (c.cell.status != CellStatus.MINE))
     {
       this.clearChunk(c);
     }
+    
+    c.click();
 
+    if((this.minesAround(c) > 0) && (c.cell.status != CellStatus.MINE))
+    {
+      this.showMinesText(c);
+    }
+    
   }
   
   public void resetGame() //resets game state
@@ -151,18 +156,17 @@ class GMineField extends GAbstractControl
   
   //Clears all zeroes and highlights all non-zeroes.
   //This is suuuuper unoptimized but I don't care.
-    public void clearChunk(GButtonCell source)
+  public void clearChunk(GButtonCell source)
   {
-    int i = 0;
-
     Set<GButtonCell> seen = new CopyOnWriteArraySet(); //list of all seen cells
     int old_size = seen.size();
     
     seen.add(source);
     
+    int i = 0;
     while(seen.size() != old_size) //while we are still discovering new cells,
     {
-      println(i,"th iteration saw ",seen.size()," items.");
+      println(i,"th iter saw ",seen.size(),".");
       old_size = seen.size(); //set it up to fail if size does not change
       
       for(GButtonCell b : seen) //for all already-marked cells,
@@ -173,12 +177,7 @@ class GMineField extends GAbstractControl
           seen.addAll(cells);
         }
       }
-      
       i++;
-      if(i > 2000)
-      {
-        break;
-      }
     }
     
     for(GButtonCell c : seen) //click empty ones

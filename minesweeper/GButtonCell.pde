@@ -20,6 +20,7 @@ class GButtonCell extends GButton
   public void reset()
   {
     this.cell.shown = false;
+    this.cell.status = FlagStatus.NO_FLAG;
     this.render();
   }
   
