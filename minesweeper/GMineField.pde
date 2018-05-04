@@ -38,6 +38,17 @@ class GMineField extends GAbstractControl
     return mines;
   }
   
+  public void playerClick(GButtonCell c) //human clicks a cell
+  {
+    c.click();
+    
+    if(this.hasNoMinesAround(c) && (c.cell.status != CellStatus.MINE))
+    {
+      this.clearChunk(c);
+    }
+
+  }
+  
   public void resetGame() //resets game state
   {
     for(GButtonCell[] row : this.minefield)

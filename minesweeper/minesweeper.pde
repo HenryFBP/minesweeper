@@ -14,12 +14,7 @@ public void anybutton_click(GButtonCell source, GEvent event)
 {  
   if(mouseButton == LEFT)
   {
-    source.click();
-    
-    if(buttons.hasNoMinesAround(source) && (source.cell.status != CellStatus.MINE))
-    {
-      buttons.clearChunk(source);
-    }
+    buttons.playerClick(source);
   }
   else if(mouseButton == RIGHT)
   {
@@ -37,7 +32,7 @@ public void keyPressed()
   
   println(Lib.formatKeyCode(key, keyCode));
   
-  Character k = Character.toUpperCase(key);
+  char k = Character.toUpperCase(key);
   
   if(k == Keys.R.code)
   {

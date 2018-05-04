@@ -1,6 +1,6 @@
-public interface MinesweeperPlayer
+public abstract interface MinesweeperPlayer
 {
-  public GMineField board;
+  public GMineField board = null;
   
   public void uncover(Location l);
 }
