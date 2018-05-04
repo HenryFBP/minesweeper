@@ -25,7 +25,7 @@ public class Lib
     return String.format("%s %s %s", s, (int)k, kc);
   }
   
-  public static int random(int h, int l)
+  public static int random(int l, int h)
   {
     return new Random().nextInt((h - l) + 1) + l;
   }

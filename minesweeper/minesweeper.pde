@@ -35,7 +35,7 @@ public void anybutton_click(GButtonCell source, GEvent event)
 public void keyPressed()
 {
   
-  println(formatKeyCode(key, keyCode));
+  println(Lib.formatKeyCode(key, keyCode));
   
   Character k = Character.toUpperCase(key);
   
