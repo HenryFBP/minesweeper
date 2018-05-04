@@ -1,8 +1,9 @@
-public static final float MINE_CHANCE = 20.0;
 
 // A single Cell.
 public class Cell
 {
+  public static final float MINE_CHANCE = 20.0f;
+
   public CellStatus status = CellStatus.EMPTY; //what's in da cell?
   public FlagStatus flag = FlagStatus.NO_FLAG; //if we have a flag
   
@@ -31,7 +32,7 @@ public class Cell
   
   public void randomize()
   {
-    float num = random(0, 100);
+    float num = Lib.random(0, 100);
     
     if(num < MINE_CHANCE)
     {
