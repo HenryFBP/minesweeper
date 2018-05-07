@@ -6,6 +6,7 @@ public static final int[] offsets = {-1, 0, 1};
 class GMineField extends GAbstractControl
 {
   GButtonCell[][] minefield;
+  Boolean winStatus = null;
     
   GMineField(PApplet applet)
   {
@@ -39,7 +40,7 @@ class GMineField extends GAbstractControl
   }
   
   public void playerClick(GButtonCell c) //human clicks a cell
-  {    
+  {
     if((!c.cell.shown) && this.hasNoMinesAround(c) && (c.cell.status != CellStatus.MINE))
     {
       this.clearChunk(c);
